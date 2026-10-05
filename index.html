@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colorado Producers Data Set</title>
+<meta name="description" content="A compiled data set of Colorado farms, ranches, markets and food businesses that sell to the public: summary, map and table.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.min.css">
+<style>
+:root{
+  --bg:#f7f7f5; --panel:#ffffff; --ink:#1d1f1c; --muted:#62665f; --line:#dddcd6; --accent:#2f6b3c;
+  --bar:#2f6b3c; --bar-2:#a9c7ae; --chip:#efefea; --row:#fafaf8;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#141613; --panel:#1b1e1a; --ink:#e8e9e4; --muted:#a2a79d; --line:#30352d; --accent:#8cc29a;
+    --bar:#7fb88a; --bar-2:#3b5a42; --chip:#262b24; --row:#1f231e; }
+}
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 var(--font); }
+a{ color:var(--accent); }
+header{ background:var(--panel); border-bottom:1px solid var(--line); }
+.wrap{ max-width:1200px; margin:0 auto; padding:0 16px; }
+header .wrap{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-top:18px; }
+h1{ font-size:1.4rem; margin:0 0 2px; }
+.sub{ color:var(--muted); margin:0 0 14px; font-size:.92rem; }
+nav{ display:flex; gap:4px; }
+nav a{ text-decoration:none; color:var(--muted); padding:10px 14px; border-bottom:2px solid transparent; font-weight:600; }
+nav a[aria-current="page"]{ color:var(--ink); border-bottom-color:var(--accent); }
+main{ padding:20px 0 40px; }
+section[hidden]{ display:none; }
+.kpis{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
+.kpi{ background:var(--panel); border:1px solid var(--line); padding:14px 16px; }
+.kpi b{ display:block; font-size:1.7rem; line-height:1.1; font-variant-numeric:tabular-nums; }
+.kpi span{ color:var(--muted); font-size:.85rem; }
+.grid2{ display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:16px; }
+.card{ background:var(--panel); border:1px solid var(--line); padding:16px; min-width:0; }
+.card h2{ font-size:1rem; margin:0 0 4px; }
+.card p.note{ color:var(--muted); font-size:.85rem; margin:0 0 12px; }
+.bars{ display:grid; gap:6px; }
+.bars .row{ display:grid; grid-template-columns:minmax(120px,190px) 1fr 52px; gap:10px; align-items:center; font-size:.9rem; }
+.bars .row .track{ background:var(--chip); height:14px; }
+.bars .row .fill{ background:var(--bar); height:100%; }
+.bars .row .n{ text-align:right; font-variant-numeric:tabular-nums; }
+.bars .row button{ all:unset; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bars .row button:hover{ text-decoration:underline; }
+.scroll{ max-height:420px; overflow:auto; }
+svg text{ fill:var(--ink); font:12px var(--font); }
+svg .muted{ fill:var(--muted); }
+.full{ grid-column:1/-1; }
+#map{ height:calc(100vh - 210px); min-height:420px; border:1px solid var(--line); }
+.toolbar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+.toolbar input, .toolbar select{ font:inherit; padding:8px 10px; border:1px solid var(--line); background:var(--panel); color:var(--ink); min-width:0; }
+.toolbar input[type=search]{ flex:1 1 220px; }
+.toolbar .count{ color:var(--muted); font-size:.9rem; margin-left:auto; }
+.btn{ font:inherit; padding:8px 12px; border:1px solid var(--line); background:var(--panel); color:var(--ink); cursor:pointer; text-decoration:none; }
+.table-wrap{ overflow-x:auto; border:1px solid var(--line); background:var(--panel); }
+table{ border-collapse:collapse; width:100%; font-size:.88rem; }
+th, td{ text-align:left; padding:7px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+th{ position:sticky; top:0; background:var(--panel); cursor:pointer; white-space:nowrap; user-select:none; }
+th[aria-sort="ascending"]::after{ content:" ▲"; } th[aria-sort="descending"]::after{ content:" ▼"; }
+tbody tr:nth-child(even){ background:var(--row); }
+td.wrap-cell{ max-width:260px; }
+.pager{ display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:10px; color:var(--muted); font-size:.9rem; }
+.legend{ background:var(--panel); color:var(--ink); border:1px solid var(--line); padding:8px 10px; font-size:12px; line-height:1.6; }
+.legend summary{ cursor:pointer; font-weight:600; }
+.legend i{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+.leaflet-popup-content{ font:13px/1.45 var(--font); }
+.leaflet-popup-content b{ font-size:14px; }
+footer{ color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); padding:16px 0 30px; }
+@media (max-width:640px){ .bars .row{ grid-template-columns:110px 1fr 44px; } #map{ height:70vh; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div>
+      <h1>Colorado Producers Data Set</h1>
+      <p class="sub">Farms, ranches, markets and food businesses that sell to the public, compiled from public directories and checked against producers' own websites. <span id="stamp"></span></p>
+    </div>
+    <nav aria-label="Views">
+      <a href="#summary" data-view="summary">Summary</a>
+      <a href="#map" data-view="map">Map</a>
+      <a href="#table" data-view="table">Table</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="v-summary" aria-label="Summary">
+    <div class="kpis" id="kpis"></div>
+    <div class="grid2">
+      <div class="card full">
+        <h2>Growth of the data set by source</h2>
+        <p class="note">Producers in the data set as each source was added. Each bar shows the running total; the top segment is what that source added.</p>
+        <div id="growth"></div>
+      </div>
+      <div class="card"><h2>By category</h2><p class="note">A producer can be in more than one category. Click one to see it in the table.</p><div class="bars" id="byGroup"></div></div>
+      <div class="card"><h2>By source</h2><p class="note">How many producers each source lists. Most producers appear in more than one.</p><div class="bars" id="bySource"></div></div>
+      <div class="card"><h2>By county</h2><p class="note">Click a county to see its producers in the table.</p><div class="bars scroll" id="byCounty"></div></div>
+      <div class="card"><h2>Contact details on file</h2><p class="note">Share of producers with each detail.</p><div class="bars" id="complete"></div></div>
+    </div>
+  </section>
+
+  <section id="v-map" aria-label="Map" hidden>
+    <div class="toolbar">
+      <input type="search" id="mq" placeholder="Search name, town or product" aria-label="Search the map">
+      <select id="mgroup" aria-label="Category"></select>
+      <select id="mcounty" aria-label="County"></select>
+      <span class="count" id="mcount"></span>
+    </div>
+    <div id="map" role="region" aria-label="Map of producers"></div>
+  </section>
+
+  <section id="v-table" aria-label="Table" hidden>
+    <div class="toolbar">
+      <input type="search" id="tq" placeholder="Search name, town or product" aria-label="Search the table">
+      <select id="tgroup" aria-label="Category"></select>
+      <select id="tcounty" aria-label="County"></select>
+      <select id="tsource" aria-label="Source"></select>
+      <a class="btn" id="csv" href="#" download="colorado-producers.csv">Download CSV</a>
+      <span class="count" id="tcount"></span>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th data-k="name">Name</th><th data-k="groups">Category</th><th data-k="city">Town</th><th data-k="county">County</th>
+        <th data-k="phone">Phone</th><th data-k="website">Website</th><th data-k="products">Products</th><th data-k="sources">Sources</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table></div>
+    <div class="pager"><button class="btn" id="prev">Previous</button><span id="page"></span><button class="btn" id="next">Next</button></div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  Sources: Colorado Proud Farm Fresh Directory and member directory (Colorado Department of Agriculture), Colorado Farmers Market Association, USDA local food directories, Chaffee Provides, and farmers market vendor lists. Listings are checked against each producer's own website where one exists. Compiled by David Brown. <a href="data/producers.csv" download>Download the full data set (CSV)</a>.
+</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var COLORS = { "Farmers' Markets":"#2f6b3c", "Farms & Ranches":"#8a6d3b", "Agritourism":"#2f8f8f", "CSA & Farm Shares":"#c77d24",
+    "Farm Stands":"#c84a4a", "U-Pick":"#c2417a", "Garden Centers":"#4a9d5b", "Wineries":"#7a4fb0", "Shops & Grocers":"#2f6f9f",
+    "Restaurants & Caterers":"#5a6b8c", "Wholesale & Food Hubs":"#6f7f2a", "Food Assistance":"#a94f28" };
+  var ALL = [], SUM = null, map = null, cluster = null;
+  var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+  var fmt = function(n){ return n.toLocaleString("en-US"); };
+  var $ = function(id){ return document.getElementById(id); };
+  var link = function(u, label){ return /^https?:\/\//i.test(u||"") ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(label || u.replace(/^https?:\/\/(www\.)?/,"").replace(/\/$/,""))+'</a>' : ""; };
+
+  // ---------- views ----------
+  function show(view){
+    if(["summary","map","table"].indexOf(view) === -1) view = "summary";
+    ["summary","map","table"].forEach(function(v){ $("v-"+v).hidden = v !== view; });
+    document.querySelectorAll("nav a").forEach(function(a){ a.setAttribute("aria-current", a.dataset.view === view ? "page" : "false"); });
+    if(view === "map"){ initMap(); setTimeout(function(){ map.invalidateSize(); }, 0); }
+  }
+  window.addEventListener("hashchange", function(){ show(location.hash.slice(1).split("?")[0]); });
+
+  // ---------- summary ----------
+  function bars(el, rows, total, onClick){
+    var max = Math.max.apply(null, rows.map(function(r){ return r.count; })) || 1;
+    el.innerHTML = rows.map(function(r){
+      var pct = total ? Math.round(100 * r.count / total) + "%" : fmt(r.count);
+      var label = onClick ? '<button type="button" data-name="'+esc(r.name)+'" title="'+esc(r.name)+'">'+esc(r.name)+'</button>' : '<span title="'+esc(r.name)+'">'+esc(r.name)+'</span>';
+      return '<div class="row">'+label+'<div class="track"><div class="fill" style="width:'+(100*r.count/max).toFixed(1)+'%"></div></div><span class="n">'+(total ? pct : fmt(r.count))+'</span></div>';
+    }).join("");
+    if(onClick) el.querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ onClick(b.dataset.name); }); });
+  }
+  function growthChart(el, g){
+    var W = 860, H = 300, L = 54, R = 16, T = 18, B = 84, n = g.length, max = g[g.length-1].total;
+    var step = Math.pow(10, Math.floor(Math.log10(max))) / (max / Math.pow(10, Math.floor(Math.log10(max))) < 3 ? 2 : 1);
+    var top = Math.ceil(max / step) * step, bw = (W - L - R) / n, y = function(v){ return T + (H - T - B) * (1 - v / top); };
+    var s = '<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Producers in the data set as each source was added, rising from '+g[0].total+' to '+max+'">';
+    for(var v = 0; v <= top; v += step){
+      s += '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="var(--line)"/><text class="muted" x="'+(L-8)+'" y="'+(y(v)+4)+'" text-anchor="end">'+fmt(v)+'</text>';
+    }
+    g.forEach(function(d, i){
+      var x = L + i * bw + bw * 0.18, w = bw * 0.64, prev = d.total - d.added;
+      s += '<rect x="'+x+'" y="'+y(prev)+'" width="'+w+'" height="'+(y(0)-y(prev))+'" fill="var(--bar-2)"><title>'+esc(d.source)+': '+fmt(prev)+' before</title></rect>';
+      s += '<rect x="'+x+'" y="'+y(d.total)+'" width="'+w+'" height="'+(y(prev)-y(d.total))+'" fill="var(--bar)"><title>'+esc(d.source)+': +'+fmt(d.added)+'</title></rect>';
+      s += '<text x="'+(x+w/2)+'" y="'+(y(d.total)-6)+'" text-anchor="middle" font-weight="600">'+fmt(d.total)+'</text>';
+      var words = d.source.split(" "), lines = [], cur = "";
+      words.forEach(function(wd){ if((cur+" "+wd).trim().length > 17){ lines.push(cur.trim()); cur = wd; } else cur += " "+wd; }); lines.push(cur.trim());
+      lines.slice(0,3).forEach(function(t, j){ s += '<text x="'+(x+w/2)+'" y="'+(H-B+16+j*14)+'" text-anchor="middle">'+esc(t)+'</text>'; });
+      var dt = new Date(d.date+"T12:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});
+      s += '<text class="muted" x="'+(x+w/2)+'" y="'+(H-B+16+Math.min(lines.length,3)*14+2)+'" text-anchor="middle">+'+fmt(d.added)+' · '+dt+'</text>';
+    });
+    el.innerHTML = s + '</svg>';
+  }
+  function renderSummary(){
+    $("stamp").textContent = "Updated " + new Date(SUM.generated+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}) + ".";
+    $("kpis").innerHTML = [[SUM.total,"producers"],[SUM.mapped,"on the map"],[SUM.counties,"counties"],[SUM.sources,"sources"],[SUM.verified,"checked against their own website"]]
+      .map(function(k){ return '<div class="kpi"><b>'+fmt(k[0])+'</b><span>'+k[1]+'</span></div>'; }).join("");
+    growthChart($("growth"), SUM.growth);
+    var toTable = function(field){ return function(name){ T[field] = name; syncTable(); location.hash = "table"; }; };
+    bars($("byGroup"), SUM.groups.slice().sort(function(a,b){ return b.count - a.count; }), 0, toTable("group"));
+    bars($("bySource"), SUM.by_source.slice().sort(function(a,b){ return b.count - a.count; }), 0, toTable("source"));
+    bars($("byCounty"), SUM.counties_list, 0, function(name){ if(name !== "Not set"){ T.county = name; syncTable(); location.hash = "table"; } });
+    bars($("complete"), SUM.completeness, SUM.total);
+  }
+
+  // ---------- shared filters ----------
+  function matches(m, q, group, county, source){
+    if(group && m.groups.indexOf(group) === -1) return false;
+    if(county && m.county !== county) return false;
+    if(source && m.sources.indexOf(source) === -1) return false;
+    if(q){ var hay = (m.name+" "+m.city+" "+m.county+" "+m.products+" "+m.labels.join(" ")).toLowerCase();
+      if(q.toLowerCase().split(/\s+/).some(function(w){ return hay.indexOf(w) === -1; })) return false; }
+    return true;
+  }
+  function fillSelect(el, first, items){
+    el.innerHTML = '<option value="">'+first+'</option>' + items.map(function(i){ return '<option>'+esc(i)+'</option>'; }).join("");
+  }
+
+  // ---------- map ----------
+  function dot(color){ return L.divIcon({ className:"", iconSize:[14,14], iconAnchor:[7,7], popupAnchor:[0,-6],
+    html:'<div style="width:14px;height:14px;border-radius:50%;background:'+color+';border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.35)"></div>' }); }
+  function popup(m){
+    var rows = [esc(m.groups.join(", ") || m.labels.join(", "))];
+    var addr = [m.address, m.city && m.address.indexOf(m.city) === -1 ? m.city : ""].filter(Boolean).join(", ");
+    if(addr) rows.push(esc(addr));
+    if(m.hours) rows.push(esc(m.hours));
+    if(m.phone) rows.push(esc(m.phone));
+    var web = link(m.website) || link(m.facebook, "Facebook") || link(m.instagram, "Instagram"); if(web) rows.push(web);
+    rows.push('<span style="color:var(--muted)">Sources: '+esc(m.sources.join("; "))+'</span>');
+    return '<b>'+esc(m.name)+'</b><br>'+rows.join("<br>");
+  }
+  function initMap(){
+    if(map) return;
+    map = L.map("map", { scrollWheelZoom:true }).setView([39.0, -105.55], 7);
+    map.attributionControl.setPrefix(false);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom:19,
+      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+    cluster = L.markerClusterGroup({ maxClusterRadius:40, showCoverageOnHover:false, spiderfyOnMaxZoom:true }).addTo(map);
+    ALL.forEach(function(m){ if(m.lat != null) m._mk = L.marker([m.lat, m.lng], { icon:dot(COLORS[m.groups[0]] || "#777"), title:m.name }).bindPopup(popup(m), { maxWidth:280 }); });
+    var legend = L.control({ position:"bottomleft" });
+    legend.onAdd = function(){ var d = L.DomUtil.create("div","legend");  // folds away on small screens
+      d.innerHTML = '<details'+(window.innerWidth > 900 ? ' open' : '')+'><summary>Key</summary>'+Object.keys(COLORS).map(function(k){ return '<i style="background:'+COLORS[k]+'"></i>'+esc(k); }).join("<br>")+'</details>';
+      L.DomEvent.disableClickPropagation(d); return d; };
+    legend.addTo(map);
+    ["mq","mgroup","mcounty"].forEach(function(id){ $(id).addEventListener("input", applyMap); });
+    applyMap();
+  }
+  function applyMap(){
+    var q = $("mq").value.trim(), g = $("mgroup").value, c = $("mcounty").value;
+    var shown = ALL.filter(function(m){ return m._mk && matches(m, q, g, c, ""); });
+    cluster.clearLayers(); cluster.addLayers(shown.map(function(m){ return m._mk; }));
+    $("mcount").textContent = fmt(shown.length) + " on the map";
+    if((q || g || c) && shown.length) map.fitBounds(L.latLngBounds(shown.map(function(m){ return [m.lat, m.lng]; })).pad(0.15), { maxZoom:12 });
+  }
+
+  // ---------- table ----------
+  var T = { q:"", group:"", county:"", source:"", sort:"name", dir:1, page:0, size:50 };
+  function syncTable(){ $("tq").value = T.q; $("tgroup").value = T.group; $("tcounty").value = T.county; $("tsource").value = T.source; T.page = 0; renderTable(); }
+  function rowsFiltered(){
+    var rows = ALL.filter(function(m){ return matches(m, T.q, T.group, T.county, T.source); });
+    var k = T.sort, key = function(m){ var v = m[k]; return (Array.isArray(v) ? v.join(", ") : (v || "")).toString().toLowerCase(); };
+    rows.sort(function(a, b){ var x = key(a), y = key(b); if(!x && y) return 1; if(x && !y) return -1; return x < y ? -T.dir : x > y ? T.dir : 0; });
+    return rows;
+  }
+  function renderTable(){
+    var rows = rowsFiltered(), pages = Math.max(1, Math.ceil(rows.length / T.size));
+    T.page = Math.min(T.page, pages - 1);
+    $("tbody").innerHTML = rows.slice(T.page * T.size, (T.page + 1) * T.size).map(function(m){
+      var web = link(m.website) || link(m.facebook, "Facebook") || link(m.instagram, "Instagram");
+      return '<tr><td><b>'+esc(m.name)+'</b></td><td>'+esc(m.groups.join(", "))+'</td><td>'+esc(m.city)+'</td><td>'+esc(m.county)+'</td><td style="white-space:nowrap">'+esc(m.phone)+'</td><td class="wrap-cell">'+web+'</td><td class="wrap-cell">'+esc(m.products.length > 110 ? m.products.slice(0,110)+"…" : m.products)+'</td><td class="wrap-cell">'+esc(m.sources.join("; "))+'</td></tr>';
+    }).join("") || '<tr><td colspan="8">No producers match.</td></tr>';
+    $("tcount").textContent = fmt(rows.length) + " of " + fmt(ALL.length) + " producers";
+    $("page").textContent = "Page " + (T.page + 1) + " of " + pages;
+    $("prev").disabled = T.page === 0; $("next").disabled = T.page >= pages - 1;
+    document.querySelectorAll("th[data-k]").forEach(function(th){ th.setAttribute("aria-sort", th.dataset.k === T.sort ? (T.dir > 0 ? "ascending" : "descending") : "none"); });
+  }
+  function csvOf(rows){
+    var cols = [["Name","name"],["Category","groups"],["Detailed categories","labels"],["Address","address"],["Town","city"],["County","county"],["ZIP","zip"],
+      ["Phone","phone"],["Email","email"],["Website","website"],["Facebook","facebook"],["Instagram","instagram"],["Hours","hours"],["Months open","months"],
+      ["Products","products"],["SNAP","snap"],["Certified organic","organic"],["Latitude","lat"],["Longitude","lng"],["Sources","sources"]];
+    var cell = function(v){ v = Array.isArray(v) ? v.join("; ") : (v === true ? "Yes" : (v === false || v == null ? "" : String(v))); return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
+    return "﻿" + [cols.map(function(c){ return c[0]; }).join(",")].concat(rows.map(function(m){ return cols.map(function(c){ return cell(m[c[1]]); }).join(","); })).join("\r\n");
+  }
+  function initTable(){
+    [["tq","q"],["tgroup","group"],["tcounty","county"],["tsource","source"]].forEach(function(p){
+      $(p[0]).addEventListener("input", function(){ T[p[1]] = $(p[0]).value.trim(); T.page = 0; renderTable(); });
+    });
+    document.querySelectorAll("th[data-k]").forEach(function(th){ th.addEventListener("click", function(){
+      T.dir = T.sort === th.dataset.k ? -T.dir : 1; T.sort = th.dataset.k; renderTable(); }); });
+    $("prev").addEventListener("click", function(){ T.page--; renderTable(); });
+    $("next").addEventListener("click", function(){ T.page++; renderTable(); });
+    $("csv").addEventListener("click", function(){
+      var url = URL.createObjectURL(new Blob([csvOf(rowsFiltered())], { type:"text/csv;charset=utf-8" }));
+      this.href = url; setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    });
+    renderTable();
+  }
+
+  Promise.all([fetch("data/producers.json").then(function(r){ return r.json(); }), fetch("data/summary.json").then(function(r){ return r.json(); })])
+    .then(function(r){
+      ALL = r[0]; SUM = r[1];
+      var groups = SUM.groups.map(function(g){ return g.name; });
+      var counties = SUM.counties_list.map(function(c){ return c.name; }).filter(function(c){ return c !== "Not set"; }).sort();
+      fillSelect($("mgroup"), "All categories", groups); fillSelect($("tgroup"), "All categories", groups);
+      fillSelect($("mcounty"), "All counties", counties); fillSelect($("tcounty"), "All counties", counties);
+      fillSelect($("tsource"), "All sources", SUM.by_source.map(function(s){ return s.name; }));
+      renderSummary(); initTable();
+      show(location.hash.slice(1) || "summary");
+    })
+    .catch(function(e){ document.querySelector("main").innerHTML = '<p>Could not load the data ('+esc(e.message)+').</p>'; });
+})();
+</script>
+</body>
+</html>

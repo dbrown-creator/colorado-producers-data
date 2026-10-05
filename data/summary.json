@@ -1,0 +1,402 @@
+{
+ "generated": "2026-10-05",
+ "total": 1332,
+ "mapped": 1256,
+ "counties": 61,
+ "sources": 7,
+ "verified": 131,
+ "groups": [
+  {
+   "name": "Farmers' Markets",
+   "count": 153
+  },
+  {
+   "name": "Farms & Ranches",
+   "count": 550
+  },
+  {
+   "name": "Agritourism",
+   "count": 186
+  },
+  {
+   "name": "CSA & Farm Shares",
+   "count": 82
+  },
+  {
+   "name": "Farm Stands",
+   "count": 102
+  },
+  {
+   "name": "U-Pick",
+   "count": 18
+  },
+  {
+   "name": "Garden Centers",
+   "count": 22
+  },
+  {
+   "name": "Wineries",
+   "count": 40
+  },
+  {
+   "name": "Shops & Grocers",
+   "count": 364
+  },
+  {
+   "name": "Restaurants & Caterers",
+   "count": 74
+  },
+  {
+   "name": "Wholesale & Food Hubs",
+   "count": 9
+  },
+  {
+   "name": "Food Assistance",
+   "count": 18
+  }
+ ],
+ "counties_list": [
+  {
+   "name": "Larimer",
+   "count": 113
+  },
+  {
+   "name": "Boulder",
+   "count": 102
+  },
+  {
+   "name": "Denver",
+   "count": 91
+  },
+  {
+   "name": "El Paso",
+   "count": 90
+  },
+  {
+   "name": "Weld",
+   "count": 82
+  },
+  {
+   "name": "Jefferson",
+   "count": 74
+  },
+  {
+   "name": "Not set",
+   "count": 74
+  },
+  {
+   "name": "Arapahoe",
+   "count": 70
+  },
+  {
+   "name": "Mesa",
+   "count": 65
+  },
+  {
+   "name": "Delta",
+   "count": 43
+  },
+  {
+   "name": "Adams",
+   "count": 42
+  },
+  {
+   "name": "Chaffee",
+   "count": 42
+  },
+  {
+   "name": "Pueblo",
+   "count": 41
+  },
+  {
+   "name": "Douglas",
+   "count": 34
+  },
+  {
+   "name": "Elbert",
+   "count": 32
+  },
+  {
+   "name": "La Plata",
+   "count": 26
+  },
+  {
+   "name": "Fremont",
+   "count": 24
+  },
+  {
+   "name": "Montrose",
+   "count": 23
+  },
+  {
+   "name": "Garfield",
+   "count": 21
+  },
+  {
+   "name": "Montezuma",
+   "count": 21
+  },
+  {
+   "name": "Eagle",
+   "count": 14
+  },
+  {
+   "name": "Morgan",
+   "count": 13
+  },
+  {
+   "name": "Otero",
+   "count": 13
+  },
+  {
+   "name": "Custer",
+   "count": 11
+  },
+  {
+   "name": "Rio Grande",
+   "count": 11
+  },
+  {
+   "name": "Alamosa",
+   "count": 10
+  },
+  {
+   "name": "Routt",
+   "count": 9
+  },
+  {
+   "name": "Archuleta",
+   "count": 7
+  },
+  {
+   "name": "Broomfield",
+   "count": 7
+  },
+  {
+   "name": "Kit Carson",
+   "count": 7
+  },
+  {
+   "name": "Moffat",
+   "count": 7
+  },
+  {
+   "name": "Phillips",
+   "count": 7
+  },
+  {
+   "name": "Saguache",
+   "count": 7
+  },
+  {
+   "name": "Yuma",
+   "count": 7
+  },
+  {
+   "name": "Conejos",
+   "count": 6
+  },
+  {
+   "name": "Gunnison",
+   "count": 6
+  },
+  {
+   "name": "Huerfano",
+   "count": 6
+  },
+  {
+   "name": "Las Animas",
+   "count": 6
+  },
+  {
+   "name": "Park",
+   "count": 6
+  },
+  {
+   "name": "Pitkin",
+   "count": 6
+  },
+  {
+   "name": "San Miguel",
+   "count": 5
+  },
+  {
+   "name": "Clear Creek",
+   "count": 4
+  },
+  {
+   "name": "Lincoln",
+   "count": 4
+  },
+  {
+   "name": "Logan",
+   "count": 4
+  },
+  {
+   "name": "Prowers",
+   "count": 4
+  },
+  {
+   "name": "Teller",
+   "count": 4
+  },
+  {
+   "name": "Washington",
+   "count": 4
+  },
+  {
+   "name": "Crowley",
+   "count": 3
+  },
+  {
+   "name": "Grand",
+   "count": 3
+  },
+  {
+   "name": "Rio Blanco",
+   "count": 3
+  },
+  {
+   "name": "Summit",
+   "count": 3
+  },
+  {
+   "name": "Cheyenne",
+   "count": 2
+  },
+  {
+   "name": "Costilla",
+   "count": 2
+  },
+  {
+   "name": "Gilpin",
+   "count": 2
+  },
+  {
+   "name": "Ouray",
+   "count": 2
+  },
+  {
+   "name": "Baca",
+   "count": 1
+  },
+  {
+   "name": "Dolores",
+   "count": 1
+  },
+  {
+   "name": "Jackson",
+   "count": 1
+  },
+  {
+   "name": "Lake",
+   "count": 1
+  },
+  {
+   "name": "Mineral",
+   "count": 1
+  },
+  {
+   "name": "Otter Tail",
+   "count": 1
+  },
+  {
+   "name": "Sedgwick",
+   "count": 1
+  }
+ ],
+ "by_source": [
+  {
+   "name": "Colorado Proud Farm Fresh Directory",
+   "count": 165
+  },
+  {
+   "name": "Colorado Proud farmers market map",
+   "count": 48
+  },
+  {
+   "name": "Colorado Farmers Market Association",
+   "count": 37
+  },
+  {
+   "name": "USDA local food directories",
+   "count": 364
+  },
+  {
+   "name": "Chaffee Provides",
+   "count": 37
+  },
+  {
+   "name": "Farmers market vendor lists",
+   "count": 20
+  },
+  {
+   "name": "Colorado Proud member directory",
+   "count": 897
+  }
+ ],
+ "growth": [
+  {
+   "source": "Colorado Proud Farm Fresh Directory",
+   "date": "2026-07-10",
+   "added": 165,
+   "total": 165
+  },
+  {
+   "source": "Colorado Farmers Market Association",
+   "date": "2026-07-20",
+   "added": 12,
+   "total": 177
+  },
+  {
+   "source": "USDA local food directories",
+   "date": "2026-10-03",
+   "added": 309,
+   "total": 486
+  },
+  {
+   "source": "Chaffee Provides",
+   "date": "2026-10-03",
+   "added": 35,
+   "total": 521
+  },
+  {
+   "source": "Farmers market vendor lists",
+   "date": "2026-10-04",
+   "added": 20,
+   "total": 541
+  },
+  {
+   "source": "Colorado Proud member directory",
+   "date": "2026-10-04",
+   "added": 791,
+   "total": 1332
+  }
+ ],
+ "completeness": [
+  {
+   "name": "Website",
+   "count": 856
+  },
+  {
+   "name": "Phone",
+   "count": 1207
+  },
+  {
+   "name": "Email",
+   "count": 403
+  },
+  {
+   "name": "Facebook or Instagram",
+   "count": 864
+  },
+  {
+   "name": "Hours",
+   "count": 206
+  },
+  {
+   "name": "Products",
+   "count": 1012
+  }
+ ]
+}
