@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-05",
+ "generated": "2026-10-06",
  "total": 1332,
  "mapped": 1256,
  "counties": 61,
@@ -20,7 +20,7 @@
   },
   {
    "name": "CSA & Farm Shares",
-   "count": 82
+   "count": 83
   },
   {
    "name": "Farm Stands",
@@ -28,7 +28,7 @@
   },
   {
    "name": "U-Pick",
-   "count": 18
+   "count": 19
   },
   {
    "name": "Garden Centers",
@@ -328,7 +328,7 @@
   },
   {
    "name": "Farmers market vendor lists",
-   "count": 20
+   "count": 21
   },
   {
    "name": "Colorado Proud member directory",
@@ -363,13 +363,13 @@
   {
    "source": "Farmers market vendor lists",
    "date": "2026-10-04",
-   "added": 20,
-   "total": 541
+   "added": 21,
+   "total": 542
   },
   {
    "source": "Colorado Proud member directory",
    "date": "2026-10-04",
-   "added": 791,
+   "added": 790,
    "total": 1332
   }
  ],
@@ -384,7 +384,7 @@
   },
   {
    "name": "Email",
-   "count": 403
+   "count": 404
   },
   {
    "name": "Facebook or Instagram",
@@ -392,7 +392,7 @@
   },
   {
    "name": "Hours",
-   "count": 206
+   "count": 207
   },
   {
    "name": "Products",
