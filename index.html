@@ -120,7 +120,6 @@ footer{ color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); 
       <select id="tgroup" aria-label="Category"></select>
       <select id="tcounty" aria-label="County"></select>
       <select id="tsource" aria-label="Source"></select>
-      <a class="btn" id="csv" href="#" download="colorado-producers.csv">Download CSV</a>
       <span class="count" id="tcount"></span>
     </div>
     <div class="table-wrap"><table>
@@ -275,13 +274,6 @@ footer{ color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); 
     $("prev").disabled = T.page === 0; $("next").disabled = T.page >= pages - 1;
     document.querySelectorAll("th[data-k]").forEach(function(th){ th.setAttribute("aria-sort", th.dataset.k === T.sort ? (T.dir > 0 ? "ascending" : "descending") : "none"); });
   }
-  function csvOf(rows){
-    var cols = [["Name","name"],["Category","groups"],["Detailed categories","labels"],["Address","address"],["Town","city"],["County","county"],["ZIP","zip"],
-      ["Phone","phone"],["Email","email"],["Website","website"],["Facebook","facebook"],["Instagram","instagram"],["Hours","hours"],["Months open","months"],
-      ["Products","products"],["SNAP","snap"],["Certified organic","organic"],["Latitude","lat"],["Longitude","lng"],["Sources","sources"]];
-    var cell = function(v){ v = Array.isArray(v) ? v.join("; ") : (v === true ? "Yes" : (v === false || v == null ? "" : String(v))); return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
-    return "﻿" + [cols.map(function(c){ return c[0]; }).join(",")].concat(rows.map(function(m){ return cols.map(function(c){ return cell(m[c[1]]); }).join(","); })).join("\r\n");
-  }
   function initTable(){
     [["tq","q"],["tgroup","group"],["tcounty","county"],["tsource","source"]].forEach(function(p){
       $(p[0]).addEventListener("input", function(){ T[p[1]] = $(p[0]).value.trim(); T.page = 0; renderTable(); });
@@ -290,10 +282,6 @@ footer{ color:var(--muted); font-size:.85rem; border-top:1px solid var(--line); 
       T.dir = T.sort === th.dataset.k ? -T.dir : 1; T.sort = th.dataset.k; renderTable(); }); });
     $("prev").addEventListener("click", function(){ T.page--; renderTable(); });
     $("next").addEventListener("click", function(){ T.page++; renderTable(); });
-    $("csv").addEventListener("click", function(){
-      var url = URL.createObjectURL(new Blob([csvOf(rowsFiltered())], { type:"text/csv;charset=utf-8" }));
-      this.href = url; setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-    });
     renderTable();
   }
 
